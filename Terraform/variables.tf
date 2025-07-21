@@ -1,7 +1,7 @@
 
 variable "my_ip_cidr" {
   description = "my public IP address in CIDR notation"
-  type        = "0.0.0.0/32"
+  type        = string
 }
 
 # I will figure this one out on my machine by running
