@@ -96,3 +96,25 @@ resource "aws_security_group" "builder_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+###Part2 - For bonus points
+provisioner "remote-exec" {
+  inline = [
+    "sudo yum update -y",
+    "sudo amazon-linux-extras install docker -y",
+    "sudo service docker start",
+    "sudo usermod -aG docker ec2-user",
+    "sudo curl -L \"https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
+    "sudo chmod +x /usr/local/bin/docker-compose",
+    "docker --version",
+    "docker-compose --version"
+  ]
+
+  connection {
+    type        = "ssh"
+    user        = "ec2-user"
+    private_key = tls_private_key.ssh_key.private_key_pem
+    host        = self.public_ip
+  }
+}
+
