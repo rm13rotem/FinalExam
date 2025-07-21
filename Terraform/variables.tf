@@ -1,0 +1,10 @@
+
+variable "my_ip_cidr" {
+  description = "my public IP address in CIDR notation"
+  type        = "0.0.0.0/32"
+}
+
+# I will figure this one out on my machine by running
+# curl ifconfig.me
+
+# and running ... terraform apply -var="my_ip_cidr=##.##.##.##/32"
