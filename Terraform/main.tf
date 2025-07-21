@@ -69,7 +69,7 @@ resource "aws_instance" "builder" {
 }
 
 resource "aws_security_group" "builder_sg" {
-  name        = "builder-sg"
+  name        = "builder-sg-rotem-meron"
   description = "Allow SSH and HTTP for app"
   vpc_id      = "vpc-044604d0bfb707142"
 
