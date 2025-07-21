@@ -54,7 +54,7 @@ resource "aws_key_pair" "builder_key" {
 resource "aws_instance" "builder" {
   ami                         = data.aws_ami.amazon_linux.id
   instance_type               = "t3.medium"
-  subnet_id                   = tolist(data.aws_subnet_ids.public_subnets.ids)[0]
+  subnet_id                   = data.aws_subnets.public_subnets.ids[0]
   key_name                    = aws_key_pair.builder_key.key_name
   associate_public_ip_address = true
 
