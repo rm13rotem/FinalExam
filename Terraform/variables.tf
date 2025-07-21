@@ -26,8 +26,4 @@ variable "private_key_path" {
   type        = string
 }
 
-variable "my_ip_cidr" {
-  description = "Your current IP address in CIDR format"
-  type        = string
-}
 
