@@ -66,6 +66,29 @@ resource "aws_instance" "builder" {
   }
 
   user_data = file("setup.sh") # installs Docker & Docker Compose
+
+  ## Remote-exec provisioner for Docker and Docker Compose installation
+  ## EXTRA POINTS in part 2
+  provisioner "remote-exec" {
+      inline = [
+        "sudo yum update -y",
+        "sudo amazon-linux-extras install docker -y",
+        "sudo service docker start",
+        "sudo usermod -aG docker ec2-user",
+        "sudo curl -L \"https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
+        "sudo chmod +x /usr/local/bin/docker-compose",
+        "docker --version",
+        "docker-compose --version"
+      ]
+
+      connection {
+        type        = "ssh"
+        user        = "ec2-user"
+        private_key = tls_private_key.ssh_key.private_key_pem
+        host        = self.public_ip
+      }
+    }
+
 }
 
 resource "aws_security_group" "builder_sg" {
@@ -97,24 +120,4 @@ resource "aws_security_group" "builder_sg" {
   }
 }
 
-###Part2 - For bonus points
-provisioner "remote-exec" {
-  inline = [
-    "sudo yum update -y",
-    "sudo amazon-linux-extras install docker -y",
-    "sudo service docker start",
-    "sudo usermod -aG docker ec2-user",
-    "sudo curl -L \"https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
-    "sudo chmod +x /usr/local/bin/docker-compose",
-    "docker --version",
-    "docker-compose --version"
-  ]
-
-  connection {
-    type        = "ssh"
-    user        = "ec2-user"
-    private_key = tls_private_key.ssh_key.private_key_pem
-    host        = self.public_ip
-  }
-}
 
