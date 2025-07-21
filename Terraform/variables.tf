@@ -7,4 +7,5 @@ variable "my_ip_cidr" {
 # I will figure this one out on my machine by running
 # curl ifconfig.me
 
-# and running ... terraform apply -var="my_ip_cidr=##.##.##.##/32"
+# and running ... terraform apply -var="my_ip_cidr=35.86.136.73/32"
+

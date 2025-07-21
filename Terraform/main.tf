@@ -4,8 +4,11 @@ provider "aws" {
 
 # Research the VPC for things needed later on
 # Find a public subnet in the given VPC
-data "aws_subnet_ids" "public_subnets" {
-  vpc_id = "vpc-044604d0bfb707142"
+data "aws_subnets" "public_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = ["vpc-044604d0bfb707142"]
+  }
 }
 
 data "aws_ami" "amazon_linux" {
