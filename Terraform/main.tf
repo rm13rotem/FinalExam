@@ -1,5 +1,6 @@
 provider "aws" {
   region = "us-east-1"
+
 }
 
 # Research the VPC for things needed later on
@@ -44,7 +45,7 @@ resource "local_file" "private_key" {
 
 # Create an AWS key pair using the public key
 resource "aws_key_pair" "builder_key" {
-  key_name   = "builder-key"
+  key_name   = "builder-key-rotem-meron"
   public_key = tls_private_key.ssh_key.public_key_openssh
 }
 
