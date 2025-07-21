@@ -10,6 +10,7 @@ data "aws_subnets" "public_subnets" {
     values = ["vpc-044604d0bfb707142"]
   }
 }
+#fixed this above, because it broke for me.
 
 data "aws_ami" "amazon_linux" {
   most_recent = true
