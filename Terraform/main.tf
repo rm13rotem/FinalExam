@@ -46,7 +46,7 @@ resource "local_file" "private_key" {
 # Create an AWS key pair using the public key
 resource "aws_key_pair" "builder_key" {
   key_name   = "builder-key-rotem-meron"
-  public_key = tls_private_key.ssh_key.public_key_openssh
+  public_key = file("builder-key-rotem-meron.pub")
 }
 
 
