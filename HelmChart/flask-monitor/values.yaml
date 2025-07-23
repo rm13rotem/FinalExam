@@ -1,0 +1,18 @@
+replicaCount: 2
+
+image:
+  repository: rm13rotem/flask-aws-monitor
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 5001
+
+aws:
+  accessKeyId: "AKIAXLEKZJVVREN3MIWD"
+  secretAccessKey: "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"
+  region: "us-east-1"
+
+resources: {}

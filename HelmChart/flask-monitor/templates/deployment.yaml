@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "flask-monitor.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "flask-monitor.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "flask-monitor.name" . }}
+    spec:
+      containers:
+        - name: flask-monitor
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              value: "{{ .Values.aws.accessKeyId }}"
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "{{ .Values.aws.secretAccessKey }}"
+            - name: REGION
+              value: "{{ .Values.aws.region }}"
