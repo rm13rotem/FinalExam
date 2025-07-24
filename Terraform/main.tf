@@ -1,12 +1,17 @@
 provider "aws" {
   region = "us-east-1"
+
 }
 
 # Research the VPC for things needed later on
 # Find a public subnet in the given VPC
-data "aws_subnet_ids" "public_subnets" {
-  vpc_id = "vpc-044604d0bfb707142"
+data "aws_subnets" "public_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = ["vpc-044604d0bfb707142"]
+  }
 }
+#fixed this above, because it broke for me.
 
 data "aws_ami" "amazon_linux" {
   most_recent = true
@@ -40,8 +45,8 @@ resource "local_file" "private_key" {
 
 # Create an AWS key pair using the public key
 resource "aws_key_pair" "builder_key" {
-  key_name   = "builder-key"
-  public_key = tls_private_key.ssh_key.public_key_openssh
+  key_name   = "builder-key-rotem-meron"
+  public_key = file(var.public_key_path)
 }
 
 
@@ -50,7 +55,7 @@ resource "aws_key_pair" "builder_key" {
 resource "aws_instance" "builder" {
   ami                         = data.aws_ami.amazon_linux.id
   instance_type               = "t3.medium"
-  subnet_id                   = tolist(data.aws_subnet_ids.public_subnets.ids)[0]
+  subnet_id                   = data.aws_subnets.public_subnets.ids[0]
   key_name                    = aws_key_pair.builder_key.key_name
   associate_public_ip_address = true
 
@@ -61,10 +66,33 @@ resource "aws_instance" "builder" {
   }
 
   user_data = file("setup.sh") # installs Docker & Docker Compose
+
+  ## Remote-exec provisioner for Docker and Docker Compose installation
+  ## EXTRA POINTS in part 2
+  provisioner "remote-exec" {
+      inline = [
+        "sudo yum update -y",
+        "sudo amazon-linux-extras install docker -y",
+        "sudo service docker start",
+        "sudo usermod -aG docker ec2-user",
+        "sudo curl -L \"https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
+        "sudo chmod +x /usr/local/bin/docker-compose",
+        "docker --version",
+        "docker-compose --version"
+      ]
+
+      connection {
+        type        = "ssh"
+        user        = "ec2-user"
+        private_key = file(var.private_key_path)
+        host        = self.public_ip
+      }
+    }
+
 }
 
 resource "aws_security_group" "builder_sg" {
-  name        = "builder-sg"
+  name        = "builder-sg-rotem-meron"
   description = "Allow SSH and HTTP for app"
   vpc_id      = "vpc-044604d0bfb707142"
 
@@ -91,3 +119,5 @@ resource "aws_security_group" "builder_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+

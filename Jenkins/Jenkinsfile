@@ -1,0 +1,72 @@
+# Jenkins Pipeline for CI/CD Integration
+# dockerhub : www.dockerhub.com/rm13rotem
+
+pipeline {
+    agent any
+    
+    environment {
+        DOCKERHUB_USERNAME = credentials('rm13rotem')
+        DOCKERHUB_PASSWORD = credentials('dockerhub-password')
+        IMAGE_NAME = 'rm13rotem/flask-aws-monitor'
+    }
+    
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', url: 'https://github.com/rm13rotem/FinalExam.git'
+            }
+        }
+        
+        stage('Parallel Checks') {
+           parralel {
+
+                stage('Linting') {
+                    steps {
+                        echo "Linting"
+
+                        echo "Running Flake8 on Python files..."
+                        sh 'flake8 main.py || true'
+
+                        echo "Running Hadolint on Dockerfile..."
+                        sh 'hadolint Dockerfile || true'
+
+                        echo "Running ShellCheck on scripts (if any)..."
+                        sh 'shellcheck *.sh || true'
+                    }
+                }
+
+                stage('Security Scan') {
+                    steps {
+                        echo 'security scanning steps for dependencies and container security'
+                    }
+                }
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t $IMAGE_NAME .'
+            }
+        }
+        
+        stage('Push to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS_ID}", passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    sh '''
+                        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+                        docker push $IMAGE_NAME
+                    '''
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed! Check logs for details.'
+        }
+    }
+}

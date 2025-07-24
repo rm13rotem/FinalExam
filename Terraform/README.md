@@ -16,4 +16,9 @@ terraform/
 curl ifconfig.me
 terraform apply -var="my_ip_cidr=##.##.##.##/32"
 
+#Documentation of success
+init - in init.txt
+apply - in apply.txt
+
+
 
