@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Copy the requirements.txt file and install dependencies
 COPY requirement.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirement.txt
 
 # Stage 2: Build Stage
 FROM base AS build
