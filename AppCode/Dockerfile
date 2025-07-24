@@ -5,8 +5,8 @@ FROM python:3.9-slim AS base
 WORKDIR /app
 
 # Copy the requirements.txt file and install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirement.txt .
+RUN pip install --no-cache-dir -r requirement.txt
 
 # Stage 2: Build Stage
 FROM base AS build

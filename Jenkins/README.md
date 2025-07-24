@@ -4,38 +4,25 @@ CI/CD pipeline configurations:
 	Jenkinsfile
 	YAML
 
+I already have docker installed, so I am not going to clone 
+with the powerpoint we did in class. Just going to "suck up"
+a container and roll with it on the Jenkins file above
+(quick and not so dirty)
+
+docker --version
+I got 
+>>>>Docker version 27.5.1, build 27.5.1-0ubuntu3~24.04.2
+
+great. Now load docker image of Jenkins: 
+docker volume create jenkins_data
+docker run -d \
+  --name jenkins \
+  -p 8080:8080 -p 50000:50000 \
+  -v jenkins_data:/var/jenkins_home \
+  jenkins/jenkins:lts
+
+
 # Section 5 Goals Recap:
-Jenkinsfile must:
-
-	Clone the Git repo.
-
-	Build Docker image.
-
-	In parallel:
-
-		Run Linting (e.g., Flake8, ShellCheck, Hadolint).
-
-		Run Security Scanning (e.g., Trivy, Bandit).
-
-	Push Docker image to Docker Hub.
-
-Jenkins pipeline must:
-
-	Complete all stages without failure.
-
-	Push the image to Docker Hub successfully.
-
-# Required Setup on Jenkins EC2 (Builder Machine):
-##Jenkins Docker Permissions:
-
-Ensure Jenkins is in the docker group:
-
-Ran the following : 
-	sudo usermod -aG docker jenkins
-	sudo systemctl restart jenkins
-
-##Install Required Tools on the Agent EC2 (your Builder):
-
 Ran the following
 	sudo apt update
 	sudo apt install -y flake8 bandit shellcheck docker.io curl
