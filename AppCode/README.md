@@ -15,7 +15,7 @@ We are using 3 imports in the python :
  #Running the docker container (wouldn't normally do this into the git repository)
  docker run -e AWS_ACCESS_KEY_ID=AKIAXLEKZJVVREN3MIWD \
            -e AWS_SECRET_ACCESS_KEY=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 \
-           -e REGION=us-east-1 \
+            -e REGION=us-east-1 \
            -p 5001:5001 aws-flask-app
 
-# Access at my public ip :5001
+# Access at my public ip 3.236.7.157:5001
